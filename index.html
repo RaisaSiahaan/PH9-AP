@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis ICT Ceria ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-color:#E6F0FA;--card-bg:#fff;--primary:#8EB8E5;--primary-hover:#6B9FD8;--accent-orange:#FFB37C;--accent-yellow:#FFF275;--text-color:#4A4E69;--border-color:#D3E4F4}
+*{box-sizing:border-box}
+body{background:var(--bg-color);font-family:'Nunito',sans-serif;color:var(--text-color);margin:0;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.quiz-container{background:var(--card-bg);border-radius:28px;box-shadow:0 10px 25px rgba(142,184,229,.25);width:100%;max-width:720px;padding:30px;border:4px solid #fff;position:relative}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:15px;border-bottom:3px dashed var(--border-color)}
+.title{font-family:'Fredoka',cursive;font-size:26px;color:#537EC5;margin:0}
+.badge{background:var(--accent-yellow);color:#8C6A00;padding:6px 14px;border-radius:20px;font-weight:bold;font-size:13px;white-space:nowrap}
+.input-name{width:100%;padding:14px;border:2px solid var(--border-color);border-radius:16px;font-size:16px;font-family:'Nunito',sans-serif;margin:15px 0 25px;outline:none}
+.input-name:focus{border-color:var(--primary)}
+.question-number{font-size:14px;font-weight:700;color:var(--primary-hover);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.question-text{font-size:18px;font-weight:700;margin-bottom:12px;line-height:1.5;white-space:pre-wrap}
+.code-option{white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;font-size:14px}
+.question-hint{font-size:13px;color:#6B7894;margin:0 0 16px;font-style:italic}
+.options-container{display:flex;flex-direction:column;gap:12px}
+.option-btn{background:#F8FBFE;border:2px solid var(--border-color);border-radius:18px;padding:12px 16px;text-align:left;font-size:16px;font-family:'Nunito',sans-serif;font-weight:600;color:var(--text-color);cursor:pointer;transition:all .2s;display:flex;align-items:center;width:100%;line-height:1.4}
+.option-btn:hover{background:#FFF8EE;border-color:var(--accent-orange);transform:translateY(-1px)}
+.option-btn.selected{background:#FFEADB;border-color:var(--accent-orange);color:#B85B18}
+.option-prefix{background:#fff;border-radius:50%;min-width:32px;width:32px;height:32px;display:flex;justify-content:center;align-items:center;margin-right:13px;font-weight:bold;border:2px solid var(--border-color);color:var(--primary-hover)}
+.option-btn.selected .option-prefix{border-color:var(--accent-orange);background:var(--accent-orange);color:#fff}
+.multi .option-prefix{border-radius:8px}
+.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:28px;padding-top:15px;border-top:3px dashed var(--border-color)}
+.btn{background:var(--primary);color:#fff;border:none;padding:12px 22px;border-radius:50px;font-family:'Fredoka',cursive;font-size:16px;cursor:pointer;box-shadow:0 4px 10px rgba(142,184,229,.4);transition:.2s}
+.btn:hover{background:var(--primary-hover);transform:translateY(-1px)}
+.btn:disabled{background:#D0D7DE;cursor:not-allowed;box-shadow:none;transform:none}
+.btn-submit{background:var(--accent-orange);box-shadow:0 4px 10px rgba(255,179,124,.4)}
+.btn-submit:hover{background:#E5955D}
+.result-box{text-align:center;padding:20px 0}
+.score-display{font-family:'Fredoka',cursive;font-size:52px;color:#537EC5;margin:15px 0}
+.alert-banner{background:#FF7675;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:bold;border-radius:12px;margin-bottom:15px;display:none}
+.progress-track{height:8px;background:#EDF3FA;border-radius:20px;overflow:hidden;margin:0 0 20px}
+.progress-fill{height:100%;background:var(--primary);width:0%;transition:width .2s}
+.summary{ text-align:left;background:#FFFBEA;border:2px solid var(--accent-yellow);padding:18px;border-radius:16px;margin-top:20px}
+@media(max-width:560px){body{padding:10px}.quiz-container{padding:20px 16px}.header{align-items:flex-start;flex-direction:column}.footer .btn{flex:1}.question-text{font-size:17px}}
+
+.recording-notice{background:#F1F7FD;border:2px solid var(--border-color);border-radius:16px;padding:16px;margin:0 0 18px;font-size:14px;line-height:1.5}
+.recording-notice h3{margin:0 0 8px;color:#537EC5;font-family:'Fredoka',cursive;font-size:19px}
+.recording-notice label{display:flex;gap:9px;align-items:flex-start;margin-top:12px;font-weight:700}
+.recording-notice input{margin-top:4px;flex:0 0 auto}
+#recording-status{margin:10px 0 0;font-weight:700;color:#537EC5}
+.recording-live{color:#C0392B!important}
+
+</style>
+</head>
+<body>
+<div class="quiz-container">
+  <div class="recording-notice">
+  <h3>🎥 Pemberitahuan Perekaman Layar</h3>
+  <p>
+    Selama kuis berlangsung, tab kuis akan direkam untuk evaluasi. Setelah menekan tombol mulai, Chrome akan meminta izin dan kamu harus memilih tab kuis pada dialog berbagi layar. Rekaman dihentikan saat kuis selesai.
+  </p>
+
+  <label>
+    <input type="checkbox" id="recording-consent">
+    Saya telah membaca dan menyetujui pemberitahuan perekaman layar.
+  </label>
+
+  <p id="recording-status">Status: Belum dimulai — menunggu persetujuan</p>
+</div>
+  <div id="alert-banner" class="alert-banner">⚠️ Kamu keluar dari tab kuis! Sisa kesempatan: <span id="warning-count">3</span>x lagi.</div>
+  <div id="start-box">
+    <h1 class="title" style="text-align:center;font-size:32px">PH ICT KELAS 9<br>𐦂𖨆𐀪𖠋𐀪𐀪</h1>
+    <p style="text-align:center">Masukkan nama lengkapmu sebelum memulai kuis.<br>🍂🧸🥐☕🍪</p>
+    <select id="student-name" class="input-name">
+    <option value="">Memuat daftar nama siswa...</option>
+</select>
+    <button class="btn" style="width:100%" onclick="startQuiz()">Mulai Kuis & Rekam Layar 📝</button>
+  </div>
+  <div id="quiz-box" style="display:none">
+    <div class="header"><h1 class="title">✎ᝰ. PH ICT Kelas 9</h1><span class="badge">Benar = +1 | Salah = 0</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="question-number" id="q-number"></div>
+    <div class="question-text" id="q-text"></div>
+    <p class="question-hint" id="q-hint"></p>
+    <div class="options-container" id="options-box"></div>
+    <div class="footer">
+      <button class="btn" id="prev-btn" onclick="changeQuestion(-1)">← Sebelumnya</button>
+      <button class="btn" id="next-btn" onclick="changeQuestion(1)">Selanjutnya →</button>
+      <button class="btn btn-submit" id="submit-btn" style="display:none" onclick="finishQuiz(false)">Selesai & Kirim 🎉</button>
+    </div>
+  </div>
+  <div id="result-box" class="result-box" style="display:none">
+    <h1 class="title" id="result-title" style="font-size:32px">Kuis Selesai! 🎉</h1>
+    <p id="result-desc">Jawabanmu sudah selesai diperiksa.</p>
+    <div class="score-display" id="final-score">0</div>
+<div class="summary">
+    <p>👤 Nama: <strong id="res-student-name">-</strong></p>
+    <p>✅ Jawaban Benar: <strong id="count-correct">0</strong></p>
+    <p>❌ Jawaban Salah: <strong id="count-wrong">0</strong></p>
+    <p>⚪ Tidak Dijawab: <strong id="count-empty">0</strong></p>
+    <p>📊 Skor Maksimal: <strong id="max-score">0</strong></p>
+</div>
+    <p id="sending-status" style="font-size:13px;font-weight:bold;color:#537EC5;margin-top:15px">Mengirim data ke Google Sheets...</p>
+  </div>
+</div>
+<script>
+const GSHEET_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwR-ndHatoAdYECaO5LYIxRdzlYwTjmTm9yhZZ6--befKjEKt7oU7BPbZa7KyoWBQ2J/exec";
+const questions = [{"q":"Pada bahasa Pascal, program utama diakhiri dengan kata end yang diikuti tanda ...","options":["Titik koma (;)","Titik dua (:)","Titik (.)","Koma (,)"],"answer":2,"type":"single","score":1},{"q":"Perhatikan potongan program Pascal berikut:\n\nvar a, b: integer;\nbegin\n  a := 7; b := 3;\n  writeln(a + b * 2);\nend.\n\nKeluaran program tersebut adalah ...","options":["20","10","13","17"],"answer":2,"type":"single","score":1},{"q":"Berdasarkan kode pada soal nomor 2, manakah penjelasan yang paling tepat?","options":["Program membuat dua variabel bertipe integer, mengisi a dengan 7 dan b dengan 3, kemudian menampilkan hasil penjumlahan a dan b dikalikan 2.","Program membuat dua variabel bertipe integer, mengisi a dengan 7 dan b dengan 3, kemudian menampilkan hasil penjumlahan a dengan hasil perkalian b dan 2.","Program membuat dua variabel bertipe string, kemudian menggabungkan nilai a dan b.","Program membuat variabel a dan b, tetapi tidak memberikan nilai sehingga program tidak dapat dijalankan."],"answer":1,"type":"single","score":1},{"q":"Tipe data Pascal yang tepat untuk menyimpan bilangan desimal, misalnya 3,14, adalah ...","options":["integer","char","boolean","real"],"answer":3,"type":"single","score":1},{"q":"Dalam bahasa C standar, fungsi yang digunakan untuk menampilkan teks ke layar adalah ...","options":["printf()","cout","writeln","echo"],"answer":0,"type":"single","score":1},{"q":"Perhatikan potongan program C berikut:\n\nint x = 10;\nif (x % 2 == 0) printf(\"Genap\");\nelse printf(\"Ganjil\");\n\nKeluaran program tersebut adalah ...","options":["Ganjil","Genap","0","Terjadi error"],"answer":1,"type":"single","score":1},{"q":"Kode pada soal nomor 6 dimodifikasi untuk memeriksa apakah x lebih besar dari 10. Jika benar tampilkan “Lebih dari 10”, jika tidak tampilkan “10 atau kurang”. Manakah kode yang benar?","options":["if (x > 10)\n  printf(\"Lebih dari 10\");\nelse\n  printf(\"10 atau kurang\");","if (x < 10)\n  printf(\"Lebih dari 10\");\nelse\n  printf(\"10 atau kurang\");","if (x == 10)\n  printf(\"Lebih dari 10\");\nelse\n  printf(\"10 atau kurang\");","if (x >= 10)\n  printf(\"10 atau kurang\");\nelse\n  printf(\"Lebih dari 10\");"],"answer":0,"type":"single","score":1},{"q":"Program C harus menampilkan bilangan genap dari 2 sampai 6 secara menurun, yaitu 6 4 2. Manakah perulangan for yang tepat?","options":["for (i = 1; i <= 3; i++) { printf(\"%d \", i * 2); }","for (i = 3; i >= 1; i--) { printf(\"%d \", i * 2); }","for (i = 1; i <= 6; i++) { printf(\"%d \", i); }","for (i = 2; i <= 6; i++) { printf(\"%d \", i); }"],"answer":1,"type":"single","score":1},{"q":"Pada C++, agar perintah cout dan cin dapat digunakan, library yang harus disertakan adalah ...","options":["<stdio.h>","<iostream>","<math.h>","<string.h>"],"answer":1,"type":"single","score":1},{"q":"Dalam flowchart, simbol belah ketupat (diamond) digunakan untuk menggambarkan ...","options":["Awal atau akhir program","Proses atau perhitungan","Keputusan (percabangan Ya/Tidak)","Input atau output data"],"answer":2,"type":"single","score":1},{"q":"Pilihlah pasangan simbol flowchart dan fungsinya yang benar!","options":["Oval: awal/akhir program","Persegi panjang: proses","Anak panah: arah alur","Jajargenjang: input/output","Belah ketupat: input/output"],"answer":[0,1,2,3],"type":"multi","score":1},{"q":"Pilihlah pernyataan yang benar tentang bahasa Pascal!","options":["integer digunakan untuk bilangan bulat","Operator penugasan menggunakan :=","Pascal tidak membedakan huruf besar dan kecil","Blok perintah dibuka dengan begin dan ditutup end","Perintah input menggunakan cin"],"answer":[0,1,2,3],"type":"multi","score":1},{"q":"Pilihlah pernyataan yang benar tentang bahasa C!","options":["Setiap pernyataan diakhiri tanda titik koma (;)","Eksekusi program dimulai dari fungsi main()","scanf() digunakan untuk membaca input","Komentar satu baris ditulis dengan tanda --","Program harus diawali dengan kata program"],"answer":[0,1,2],"type":"multi","score":1},{"q":"Pilihlah pernyataan yang benar tentang bahasa C++!","options":["cout digunakan untuk menampilkan output","cin digunakan untuk membaca input","using namespace std; memungkinkan penulisan cout tanpa awalan std::","printf sama sekali tidak dapat digunakan di C++","C++ mendukung pemrograman berorientasi objek (OOP)"],"answer":[0,1,2,4],"type":"multi","score":1},{"q":"Toko buku memberi diskon 10% untuk pembelian minimal Rp100.000. Pelanggan membeli buku seharga Rp120.000. Perhatikan program Pascal berikut:\n\nvar total, bayar: real;\nbegin\n  total := 120000;\n  if total >= 100000 then bayar := total - total * 0.1\n  else bayar := total;\n  writeln(bayar:0:0);\nend.\n\nKeluaran program tersebut adalah ...","options":["12000","120000","108000","110000"],"answer":2,"type":"single","score":1},{"q":"Pak Tono membagi 7 permen secara merata kepada 2 anak. Setiap anak mendapat bagian bulat dan sisanya disimpan. Program C:\n\nint permen = 7, anak = 2;\nprintf(\"%d %d\", permen / anak, permen % anak);\n\nKeluaran dan artinya adalah ...","options":["3,5 dan 0, setiap anak mendapat 3,5 permen","4 dan 1, setiap anak mendapat 4 permen","3 dan 0,5, setiap anak mendapat 3 permen","3 dan 1, setiap anak mendapat 3 permen dan 1 permen disimpan"],"answer":3,"type":"single","score":1},{"q":"Program C++ berikut menjumlahkan angka 1 sampai 5, kecuali angka genap:\n\nint total = 0;\nfor (int i = 1; i <= 5; i++) {\n  if (i % 2 == 0) continue;\n  total += i;\n}\ncout << total;\n\nBilangan yang dijumlahkan dan keluarannya adalah ...","options":["Bilangan ganjil (1, 3, 5); keluaran 9","Bilangan genap (2, 4); keluaran 6","Semua bilangan 1–5; keluaran 15","Bilangan ganjil (1, 3, 5); keluaran 6"],"answer":0,"type":"single","score":1},{"q":"Flowchart: Mulai → Input nilai → keputusan nilai ≥ 75? → Jika Ya tampilkan “Lulus”, jika Tidak tampilkan “Remedial” → Selesai. Jika nilai siswa tepat 75, keluarannya adalah ...","options":["Remedial","Lulus","Lulus dan Remedial","Tidak ada keluaran"],"answer":1,"type":"single","score":1},{"q":"Perhatikan program Pascal berikut:\n\nvar n: integer;\nbegin\n  n := 10;\n  while n > 0 do\n  begin\n    n := n - 4;\n  end;\n  writeln(n);\nend.\n\nNilai yang ditampilkan program adalah ...","options":["0","2","-2","-4"],"answer":2,"type":"single","score":1},{"q":"Perhatikan program C berikut. Operator a++ menambah nilai a setelah nilainya dipakai dalam ekspresi:\n\nint a = 5;\nint b = a++ + 2;\nprintf(\"%d %d\", a, b);\n\nKeluaran program tersebut adalah ...","options":["6 7","5 7","6 8","5 8"],"answer":0,"type":"single","score":1},{"q":"Flowchart: s = 0 dan i = 1. Selama i ≤ 4, lakukan s = s + (i × i), lalu i = i + 1. Setelah kondisi salah, tampilkan s. Nilai s yang ditampilkan adalah ...","options":["10","20","100","30"],"answer":3,"type":"single","score":1},{"q":"Perhatikan program C++ berikut:\n\nint x = 3;\nif (x > 5);\n    cout << \"Besar\";\ncout << \"Selesai\";\n\nKeluaran program tersebut adalah ...","options":["Selesai","Besar","BesarSelesai","Pesan error saat dikompilasi"],"answer":2,"type":"single","score":1},{"q":"Pak Rudi memiliki 17 buku. Setiap rak memuat 5 buku. Program Pascal:\n\nwriteln(17 div 5, ' ', 17 mod 5);\n\nKeluaran dan maknanya adalah ...","options":["3 2, yaitu 3 rak terisi penuh dan 2 buku tersisa","3,4 2, yaitu 3,4 rak dan 2 buku tersisa","2 3, yaitu 2 rak terisi penuh dan 3 buku tersisa","5 3, yaitu 5 rak dan 3 buku tersisa"],"answer":0,"type":"single","score":1},{"q":"Pilihlah pernyataan yang benar tentang operator dan perintah dasar!","options":["Dalam bahasa C, = digunakan untuk penugasan dan == untuk perbandingan","Dalam Pascal, = digunakan untuk perbandingan dan := untuk penugasan","Dalam C++, ekspresi 5 / 2 dengan dua bilangan bulat menghasilkan 2","Dalam C, ekspresi 5 / 2.0 menghasilkan 2","Dalam Pascal, write tidak berpindah baris, sedangkan writeln berpindah baris setelah menampilkan"],"answer":[0,1,2,4],"type":"multi","score":1},{"q":"Perhatikan flowchart: Mulai → Input a, b → Keputusan: a > b? → Ya: tampilkan a / Tidak: tampilkan b → Selesai. Pilihlah pernyataan yang benar!","options":["Flowchart tersebut menampilkan bilangan yang terbesar di antara a dan b","Jika a = b, flowchart menampilkan nilai b (melalui jalur “Tidak”)","Jika a = 7 dan b = 3, flowchart menampilkan 7","Jika a = 2 dan b = 9, flowchart menampilkan 2","Jika a = b, flowchart menampilkan a dan b sekaligus"],"answer":[0,1,2],"type":"multi","score":1},{"q":"Toko memberi diskon 10% hanya jika total belanja lebih dari Rp100.000. Jika tepat Rp100.000, tidak mendapat diskon. Variabel total dan bayar bertipe real. Potongan program Pascal yang benar adalah ...","options":["if total >= 100000 then bayar := total * 0.9 else bayar := total;","if total > 100000 then bayar := total * 0.9 else bayar := total;","if total > 100000 then bayar := total * 0.1 else bayar := total;","if total < 100000 then bayar := total * 0.9 else bayar := total;"],"answer":1,"type":"single","score":1},{"q":"Program C harus menampilkan bilangan genap dari 2 sampai dengan 10 (10 ikut ditampilkan), yaitu 2 4 6 8 10. Potongan program yang benar adalah ...","options":["for (i = 2; i < 10; i += 2) printf(\"%d \", i);","for (i = 2; i <= 10; i += 2) printf(\"%d \", i);","for (i = 1; i <= 10; i++) printf(\"%d \", i * 2);","for (i = 2; i <= 10; i++) printf(\"%d \", i);"],"answer":1,"type":"single","score":1},{"q":"Bu Sari ingin menampilkan rata-rata tiga nilai bulat a = 80, b = 85, c = 86 secara lengkap (sekitar 83.6667). Potongan program C++ yang benar adalah ...","options":["int rata = (a + b + c) / 3; cout << rata;","double rata = (a + b + c) / 3; cout << rata;","double rata = (a + b + c) / 3.0; cout << rata;","double rata = a + b + c / 3; cout << rata;"],"answer":2,"type":"single","score":1},{"q":"Tarif parkir: Rp2.000 untuk jam pertama dan Rp1.000 untuk setiap jam berikutnya. Lama parkir L minimal 1 jam. Rumus yang benar untuk menghitung biaya adalah ...","options":["biaya ← 2000 + (L − 1) × 1000","biaya ← L × 2000","biaya ← 2000 + L × 1000","biaya ← L × 1000"],"answer":0,"type":"single","score":1},{"q":"Perhatikan program Pascal berikut:\n\nvar n: integer;\nbegin\n  n := 4;\n  if n mod 2 = 0 then writeln('Genap');\n  writeln('Ganjil');\nend.\n\nProgrammer ingin hanya menampilkan salah satu “Genap” atau “Ganjil”. Mengapa muncul dua baris dan bagaimana perbaikannya?","options":["Operator mod harus diganti div","Perintah writeln('Ganjil') selalu dijalankan karena bukan bagian dari if; perbaikannya gunakan if n mod 2 = 0 then writeln('Genap') else writeln('Ganjil'); tanpa titik koma sebelum else","Variabel n harus bertipe real","Harus ada titik koma setelah kata then"],"answer":1,"type":"single","score":1},{"q":"Program C membaca bilangan terus-menerus dan berhenti saat pengguna memasukkan 0. Program menghitung banyak data bukan nol; variabel banyak sudah bernilai 0. Potongan program yang benar adalah ...","options":["scanf(\"%d\", &x);\nwhile (x != 0) { banyak++; scanf(\"%d\", &x); }","x = 1;\nwhile (x != 0) { scanf(\"%d\", &x); banyak++; }","do { scanf(\"%d\", &x); banyak++; } while (x != 0);","while (x == 0) { scanf(\"%d\", &x); banyak++; }"],"answer":0,"type":"single","score":1},{"q":"Perhatikan program C++ berikut:\n\nvoid tambah(int x) { x = x + 5; }\nint main() {\n  int n = 10;\n  tambah(n);\n  cout << n;\n}\n\nSiswa mengira n menjadi 15, padahal yang tampil 10. Penjelasan dan perbaikan yang benar adalah ...","options":["Fungsi bertipe void tidak boleh mengubah variabel apa pun","Parameter dikirim by value, sehingga yang berubah hanya salinannya; perbaikannya memakai referensi: void tambah(int &x)","cout harus diganti dengan printf","Fungsi main wajib memiliki return, jika tidak n tidak berubah"],"answer":1,"type":"single","score":1},{"q":"Flowchart: Baca N; S ← 0, i ← 1; selama i ≤ N, lakukan S ← S + i dan i ← i + 1; setelah itu tampilkan S. Tujuan flowchart dan kode C yang setara adalah ...","options":["Menghitung N faktorial; S = 1; for (i = 1; i <= N; i++) S *= i;","Menghitung jumlah bilangan bulat dari 1 sampai N; S = 0; for (i = 1; i <= N; i++) S += i;","Menghitung jumlah N bilangan genap pertama; S = 0; for (i = 2; i <= N; i += 2) S += i;","Menghitung N × N; S = N * N;"],"answer":1,"type":"single","score":1},{"q":"Kasir memasukkan harga dan uang bayar. Jika uang cukup (termasuk pas), tampilkan kembalian. Jika kurang, tampilkan kekurangannya. Potongan program Pascal yang benar adalah ...","options":["if bayar >= harga then\n  writeln('Kembalian: ', bayar - harga)\nelse\n  writeln('Kurang: ', harga - bayar);","if bayar > harga then\n  writeln('Kembalian: ', bayar - harga)\nelse\n  writeln('Kurang: ', harga - bayar);","writeln('Kembalian: ', bayar - harga);","if harga > bayar then\n  writeln('Kembalian: ', bayar - harga)\nelse\n  writeln('Kurang: ', harga - bayar);"],"answer":0,"type":"single","score":1},{"q":"Pilihlah semua pernyataan yang benar tentang perbedaan Pascal dan C/C++!","options":["Pascal memakai := untuk penugasan, sedangkan C/C++ memakai =","Pascal dan C/C++ sama-sama memakai == untuk membandingkan dua nilai","C/C++ memakai tanda kurung kurawal { } untuk blok, sedangkan Pascal memakai begin dan end","Pada C/C++, float h = 5 / 2; membuat h bernilai 2.0 karena pembagian dua bilangan bulat menghasilkan bilangan bulat","Pada Pascal, titik koma harus ditulis tepat sebelum kata else","Pada Pascal, 5 div 2 menghasilkan 2, sedangkan 5 / 2 menghasilkan 2.5"],"answer":[0,2,3,5],"type":"multi","score":1}]
+let studentName="", currentIndex=0, tabSwitchCount=0;
+const maxTabSwitch=3;
+let isQuizFinished=false, isQuizStarted=false;
+let tabSwitchEventLocked=false;
+
+// Screen recording state
+let screenStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingBlobUrl = null;
+let recordingStarted = false;
+let recordingInterrupted = false;
+const userAnswers=questions.map(q=>q.type==="multi"?[]:null);
+
+function loadStudentNames() {
+  const select = document.getElementById("student-name");
+
+  select.disabled = true;
+  select.innerHTML =
+    '<option value="">Memuat daftar nama siswa...</option>';
+
+  window.handleStudentList = function(data) {
+    select.innerHTML = "";
+
+    if (!data.success || !data.names.length) {
+      select.innerHTML =
+        '<option value="">Daftar nama belum tersedia</option>';
+      return;
+    }
+
+    const firstOption = document.createElement("option");
+    firstOption.value = "";
+    firstOption.textContent = "-- Pilih Nama Siswa --";
+    select.appendChild(firstOption);
+
+    data.names.forEach(function(name) {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      select.appendChild(option);
+    });
+
+    select.disabled = false;
+  };
+
+  const script = document.createElement("script");
+  script.src = GSHEET_SCRIPT_URL +
+    "?action=getStudents&callback=handleStudentList&t=" +
+    Date.now();
+
+  script.onerror = function() {
+    select.innerHTML =
+      '<option value="">Gagal memuat nama siswa</option>';
+  };
+
+  document.body.appendChild(script);
+}
+
+window.addEventListener("load", loadStudentNames);
+
+async function startQuiz(){
+  const nameInput=document.getElementById("student-name").value.trim();
+  const consent=document.getElementById("recording-consent");
+
+  if(!nameInput){
+    alert("Harap pilih namamu terlebih dahulu!");
+    return;
+  }
+
+  if(!consent || !consent.checked){
+    alert("Silakan baca dan setujui pemberitahuan perekaman layar terlebih dahulu.");
+    return;
+  }
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia || !window.MediaRecorder){
+    alert("Browser ini belum mendukung perekaman layar. Hubungi guru.");
+    return;
+  }
+
+  studentName=nameInput;
+
+  const startButton=document.querySelector('#start-box button');
+  startButton.disabled=true;
+  startButton.textContent="Menyiapkan perekaman...";
+
+  try{
+    // Kedua permintaan dipanggil dari klik tombol siswa.
+    // Chrome tetap meminta siswa memilih tab/layar dan menyetujui izin.
+    const recordingPromise=startScreenRecording();
+    const fullscreenPromise=activateSecureQuiz();
+
+    await Promise.all([recordingPromise, fullscreenPromise]);
+
+    isQuizStarted=true;
+    document.querySelector(".recording-notice").style.display="none";
+    document.getElementById("start-box").style.display="none";
+    document.getElementById("quiz-box").style.display="block";
+    loadQuestion();
+
+  }catch(error){
+    console.error("Gagal memulai kuis/perekaman:",error);
+    await stopScreenRecording();
+
+    document.getElementById("recording-status").textContent =
+      "Status: Perekaman belum dimulai.";
+    alert("Kuis belum dimulai karena izin perekaman atau fullscreen belum berhasil. Silakan coba lagi dan pilih tab kuis pada dialog Chrome.");
+
+    startButton.disabled=false;
+    startButton.textContent="Mulai Kuis & Rekam Layar 📝";
+  }
+}
+
+// Meminta izin screen capture melalui dialog resmi Chrome.
+async function startScreenRecording(){
+  const stream = await navigator.mediaDevices.getDisplayMedia({
+    video: {
+      displaySurface: "browser",
+      frameRate: 10
+    },
+    audio: false,
+    preferCurrentTab: true
+  });
+
+  screenStream=stream;
+  recordedChunks=[];
+  recordingInterrupted=false;
+
+  const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+    ? "video/webm;codecs=vp9"
+    : "video/webm";
+
+  mediaRecorder=new MediaRecorder(stream,{mimeType});
+
+  mediaRecorder.ondataavailable=function(event){
+    if(event.data && event.data.size>0){
+      recordedChunks.push(event.data);
+    }
+  };
+
+  mediaRecorder.onstart=function(){
+    recordingStarted=true;
+    const status=document.getElementById("recording-status");
+    status.textContent="🔴 REC — Perekaman layar sedang berlangsung";
+    status.classList.add("recording-live");
+  };
+
+  mediaRecorder.onerror=function(event){
+    console.error("Kesalahan MediaRecorder:",event.error || event);
+  };
+
+  mediaRecorder.onstop=function(){
+    recordingStarted=false;
+    saveRecordingLocally();
+    if(screenStream){
+      screenStream.getTracks().forEach(track=>track.stop());
+      screenStream=null;
+    }
+  };
+
+  const videoTrack=stream.getVideoTracks()[0];
+  if(videoTrack){
+    videoTrack.addEventListener("ended",function(){
+      if(isQuizStarted && !isQuizFinished){
+        recordingInterrupted=true;
+        document.getElementById("recording-status").textContent =
+          "⚠️ Perekaman layar dihentikan sebelum kuis selesai.";
+        document.getElementById("recording-status").classList.remove("recording-live");
+        registerViolation("Berbagi layar/perekaman dihentikan sebelum kuis selesai.");
+      }
+    });
+  }
+
+  mediaRecorder.start(1000);
+}
+
+function saveRecordingLocally(){
+  if(!recordedChunks.length) return;
+
+  const blob=new Blob(recordedChunks,{type:"video/webm"});
+  if(!blob.size) return;
+
+  if(recordingBlobUrl){
+    URL.revokeObjectURL(recordingBlobUrl);
+  }
+
+  recordingBlobUrl=URL.createObjectURL(blob);
+
+  const safeName=(studentName || "Siswa").replace(/[^a-z0-9_-]/gi,"_");
+  const link=document.createElement("a");
+  link.href=recordingBlobUrl;
+  link.download="ICT_Quiz_"+safeName+"_"+Date.now()+".webm";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  document.getElementById("recording-status").textContent =
+    "Perekaman selesai. File video diunduh ke perangkat ini.";
+  document.getElementById("recording-status").classList.remove("recording-live");
+}
+
+function stopScreenRecording(){
+  return new Promise(resolve=>{
+    if(!mediaRecorder || mediaRecorder.state==="inactive"){
+      if(screenStream){
+        screenStream.getTracks().forEach(track=>track.stop());
+        screenStream=null;
+      }
+      resolve();
+      return;
+    }
+
+    const recorder=mediaRecorder;
+    recorder.addEventListener("stop",()=>resolve(),{once:true});
+    recorder.stop();
+  });
+}
+
+async function activateSecureQuiz(){
+  if(!document.fullscreenElement){
+    await document.documentElement.requestFullscreen();
+  }
+}
+function loadQuestion(){
+  const q=questions[currentIndex];
+  document.getElementById("q-number").innerText=`Soal ${currentIndex+1} dari ${questions.length}`;
+  document.getElementById("q-text").innerText=q.q;
+  document.getElementById("q-hint").innerText=q.type==="multi"?"Pilih semua jawaban yang benar (boleh lebih dari satu).":"Pilih satu jawaban yang paling tepat.";
+  document.getElementById("progress-fill").style.width=`${((currentIndex+1)/questions.length)*100}%`;
+  const optionsBox=document.getElementById("options-box");optionsBox.innerHTML="";
+  const prefixes=["A","B","C","D","E"];
+  q.options.forEach((opt,idx)=>{
+    const btn=document.createElement("button");
+    btn.type="button";btn.className="option-btn"+(q.type==="multi"?" multi":"");
+    const selected=q.type==="multi"?userAnswers[currentIndex].includes(idx):userAnswers[currentIndex]===idx;
+    if(selected)btn.classList.add("selected");
+    const prefix=document.createElement("span");prefix.className="option-prefix";prefix.textContent=prefixes[idx];
+    const text=document.createElement("span");text.textContent=opt;if(opt.includes("\n")){btn.classList.add("code-option");}
+    btn.append(prefix,text);btn.setAttribute("aria-pressed",String(selected));
+    btn.onclick=()=>selectOption(idx);optionsBox.appendChild(btn);
+  });
+  document.getElementById("prev-btn").disabled=currentIndex===0;
+  document.getElementById("next-btn").style.display=currentIndex===questions.length-1?"none":"inline-block";
+  document.getElementById("submit-btn").style.display=currentIndex===questions.length-1?"inline-block":"none";
+}
+function selectOption(index){
+  const q=questions[currentIndex];
+  if(q.type==="multi"){
+    const selected=userAnswers[currentIndex];
+    const position=selected.indexOf(index);
+    if(position>=0)selected.splice(position,1);else selected.push(index);
+  }else userAnswers[currentIndex]=index;
+  loadQuestion();
+}
+function changeQuestion(direction){
+  const next=currentIndex+direction;
+  if(next<0||next>=questions.length)return;
+  currentIndex=next;loadQuestion();
+}
+async function finishQuiz(isAutoSubmit=false){
+  if(isQuizFinished)return;
+  if(!isAutoSubmit&&!confirm("Apakah kamu yakin ingin mengumpulkan jawaban?"))return;
+
+  isQuizFinished=true;
+  isQuizStarted=false;
+
+  // Hentikan perekaman dan tunggu proses pembuatan file lokal selesai.
+  await stopScreenRecording();
+
+  let totalScore=0,correctCount=0,wrongCount=0,emptyCount=0;
+  questions.forEach((q,idx)=>{
+    const userAns=userAnswers[idx];
+    const empty=q.type==="multi"?userAns.length===0:userAns===null;
+    if(empty){emptyCount++;return;}
+    let correct;
+    if(q.type==="multi"){
+      const chosen=[...userAns].sort((a,b)=>a-b);
+      const expected=[...q.answer].sort((a,b)=>a-b);
+      correct=chosen.length===expected.length&&chosen.every((v,i)=>v===expected[i]);
+    }else correct=userAns===q.answer;
+    if(correct){
+      correctCount++;
+      totalScore+=1;
+    }else{
+      wrongCount++;
+    }
+  });
+
+  document.getElementById("quiz-box").style.display="none";
+  document.getElementById("alert-banner").style.display="none";
+  document.getElementById("result-box").style.display="block";
+
+  if(isAutoSubmit){
+    document.getElementById("result-title").innerText="Kuis Dikirim Otomatis!";
+    document.getElementById("result-desc").innerText=
+      "Kuis dihentikan otomatis setelah batas perpindahan tab atau peringatan tercapai.";
+  }
+
+  document.getElementById("res-student-name").innerText=studentName;
+  document.getElementById("final-score").innerText=totalScore;
+  document.getElementById("count-correct").innerText=correctCount;
+  document.getElementById("count-wrong").innerText=wrongCount;
+  document.getElementById("count-empty").innerText=emptyCount;
+  document.getElementById("max-score").innerText=questions.reduce((sum,q)=>sum+q.score,0);
+
+  sendDataToGSheet({
+    nama:studentName,
+    nilai:totalScore,
+    benar:correctCount,
+    salah:wrongCount,
+    kosong:emptyCount,
+    tabSwitch:tabSwitchCount,
+    recordingInterrupted:recordingInterrupted ? "Ya" : "Tidak"
+  });
+}
+function sendDataToGSheet(payload){
+  const statusElem=document.getElementById("sending-status");
+  const formData=new FormData();
+  Object.entries(payload).forEach(([key,value])=>formData.append(key,value));
+  fetch(GSHEET_SCRIPT_URL,{method:"POST",body:formData})
+    .then(response=>{
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      statusElem.innerText="✅ Permintaan pengiriman data selesai. Periksa Google Sheets untuk memastikan data tercatat.";
+      statusElem.style.color="#27ae60";
+    })
+    .catch(err=>{
+      statusElem.innerText="⚠️ Kuis selesai, tetapi pengiriman data belum dapat dikonfirmasi. Silakan hubungi guru.";
+      statusElem.style.color="#C0392B";
+      console.error(err);
+    });
+}
+document.addEventListener("fullscreenchange",()=>{
+  // Saat tab disembunyikan, perpindahan tab dihitung oleh visibilitychange.
+  // Ini mencegah satu perpindahan tab dihitung dua kali (fullscreen + tab).
+  if(isQuizStarted && !isQuizFinished && !document.hidden && !document.fullscreenElement){
+    registerViolation("Keluar dari mode layar penuh.");
+  }
+});
+
+// Klik kanan dibatasi saat kuis aktif.
+document.addEventListener("contextmenu",event=>{
+  if(!isQuizStarted || isQuizFinished) return;
+  event.preventDefault();
+  registerViolation("Percobaan menggunakan klik kanan.");
+},true);
+
+// Copy, paste, dan cut dibatasi pada halaman kuis.
+["copy","paste","cut"].forEach(eventName=>{
+  document.addEventListener(eventName,event=>{
+    if(!isQuizStarted || isQuizFinished) return;
+    event.preventDefault();
+    registerViolation("Percobaan menggunakan "+eventName.toUpperCase()+".");
+  },true);
+});
+
+function registerViolation(reason){
+  if(!isQuizStarted || isQuizFinished) return;
+  tabSwitchCount++;
+  const remaining=Math.max(0,maxTabSwitch-tabSwitchCount);
+  const banner=document.getElementById("alert-banner");
+  document.getElementById("warning-count").innerText=remaining;
+  banner.textContent="⚠️ "+reason+" Sisa kesempatan: "+remaining+"x lagi.";
+  banner.style.display="block";
+
+  if(tabSwitchCount>=maxTabSwitch){
+    alert("Batas peringatan tercapai. Kuis akan dikumpulkan otomatis.");
+    finishQuiz(true);
+  }else{
+    alert("Peringatan: "+reason+"\\nSisa kesempatan: "+remaining+" kali lagi.");
+  }
+}
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden && isQuizStarted && !isQuizFinished){
+    // Hitung satu kali ketika siswa meninggalkan tab.
+    // Kunci tetap aktif selama tab tersembunyi agar event berulang
+    // tidak menambah beberapa peringatan untuk satu perpindahan.
+    if(!tabSwitchEventLocked){
+      tabSwitchEventLocked=true;
+      registerViolation("Berpindah tab atau meninggalkan halaman kuis.");
+    }
+  } else if(!document.hidden){
+    // Buka kunci setelah siswa kembali ke tab kuis.
+    tabSwitchEventLocked=false;
+  }
+});
+</script>
+</body>
+</html>
